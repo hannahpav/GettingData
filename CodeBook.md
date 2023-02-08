@@ -1,7 +1,17 @@
 ## Project Description
 
-The project intakes data from fitness devices and produces a tidy data set with summaries
-Used the dplyr package
+The experiments have been carried out with a group of 30 volunteers within an age bracket of 19-48 years. Each person performed six activities (WALKING, WALKING_UPSTAIRS, WALKING_DOWNSTAIRS, SITTING, STANDING, LAYING) wearing a smartphone (Samsung Galaxy S II) on the waist. Using its embedded accelerometer and gyroscope, we captured 3-axial linear acceleration and 3-axial angular velocity at a constant rate of 50Hz. The experiments have been video-recorded to label the data manually. The obtained dataset has been randomly partitioned into two sets, where 70% of the volunteers was selected for generating the training data and 30% the test data. 
+
+The sensor signals (accelerometer and gyroscope) were pre-processed by applying noise filters and then sampled in fixed-width sliding windows of 2.56 sec and 50% overlap (128 readings/window). The sensor acceleration signal, which has gravitational and body motion components, was separated using a Butterworth low-pass filter into body acceleration and gravity. The gravitational force is assumed to have only low frequency components, therefore a filter with 0.3 Hz cutoff frequency was used. From each window, a vector of features was obtained by calculating variables from the time and frequency domain. See 'features_info.txt' for more details. 
+
+### For each record it is provided:
+======================================
+
+- Triaxial acceleration from the accelerometer (total acceleration) and the estimated body acceleration.
+- Triaxial Angular velocity from the gyroscope. 
+- A 561-feature vector with time and frequency domain variables. 
+- Its activity label. 
+- An identifier of the subject who carried out the experiment.Used the dplyr package
 
 ## Collection of the Raw Data
 
@@ -35,7 +45,7 @@ I went through and changed any abbreviations to the full name, and made camelcas
 
 The output, FinalData, is a summary table by subject and activity with summaries of their data.
 
-## Variables in the file
+### Variables in the file
 
 Following were for reading in the data as placeholders:
       features
@@ -56,39 +66,4 @@ The following were to mearge the data into a larger table
 #### clean_data variable is the data set with all information merged with only the mean and std data
 #### FinalData is the summary table
 
-#Merge the training and test sets together
-X <- rbind(x_train, x_test)
-Y <- rbind(y_train, y_test)
-Subject <- rbind(subject_train, subject_test)
-merged_data <- cbind(Subject, Y, X)
 
-#take only the mean and std info
-clean_data <- select(merged_data, subject, code, contains("mean"), contains("std"))
-
-#Uses descriptive activity names to name the activities in the data set
-clean_data$code <- activities[clean_data$code, 2]
-names(clean_data)[2] = "activity"
-
-#Appropriately labels the data set with descriptive variable names. 
-names(clean_data) <- gsub("Acc", "Accelerometer", names(clean_data))
-names(clean_data) <- gsub("Mag", "Magnitude", names(clean_data))
-names(clean_data) <- gsub("BodyBody", "Body", names(clean_data))
-names(clean_data) <- gsub("^t", "Time", names(clean_data))
-names(clean_data) <- gsub("^f", "Frequency", names(clean_data))
-names(clean_data) <- gsub("-mean()", "Mean", names(clean_data), ignore.case = TRUE)
-names(clean_data) <- gsub("-std()", "Std", names(clean_data), ignore.case = TRUE)
-names(clean_data) <- gsub("-freq()", "Frequency", names(clean_data), ignore.case = TRUE)
-names(clean_data) <- gsub("angle", "Angle", names(clean_data), ignore.case = TRUE)
-names(clean_data) <- gsub("tBody", "TimeBody", names(clean_data))
-names(clean_data) <- gsub("gravity", "Gravity", names(clean_data))
-names(clean_data) <- gsub("\\.", "", names(clean_data))
-names(clean_data) <- gsub("std", "Std", names(clean_data))
-names(clean_data) <- gsub("mean", "Mean", names(clean_data))
-
-#From the data set in step 4, creates a second, independent tidy data set 
-#with the average of each variable for each activity and each subject.
-
-FinalData <- clean_data %>% group_by(subject, activity) %>% summarize_all(list(mean))
-
-#write to a new file
-write.table(FinalData, "FinalData.txt", row.name = FALSE)
