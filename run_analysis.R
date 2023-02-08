@@ -29,3 +29,24 @@ X <- rbind(x_train, x_test)
 Y <- rbind(y_train, y_test)
 Subject <- rbind(subject_train, subject_test)
 merged_data <- cbind(Subject, Y, X)
+
+#take only the mean and std info
+clean_data <- select(merged_data, subject, code, contains("mean"), contains("std"))
+
+#Uses descriptive activity names to name the activities in the data set
+clean_data$code <- activities[clean_data$code, 2]
+names(clean_data[2]) = "activity"
+
+#Appropriately labels the data set with descriptive variable names. 
+names(clean_data) <- gsub("Acc", "Accelerometer", names(clean_data))
+names(clean_data) <- gsub("Mag", "Magnitude", names(clean_data))
+names(clean_data) <- gsub("BodyBody", "Body", names(clean_data))
+names(clean_data) <- gsub("^t", "Time", names(clean_data))
+names(clean_data) <- gsub("^f", "Frequency", names(clean_data))
+names(clean_data) <- gsub("-mean()", "Mean", names(clean_data), ignore.case = TRUE)
+names(clean_data) <- gsub("-std()", "Std", names(clean_data), ignore.case = TRUE)
+names(clean_data) <- gsub("-freq()", "Frequency", names(clean_data), ignore.case = TRUE)
+names(clean_data) <- gsub("angle", "Angle", names(clean_data), ignore.case = TRUE)
+names(clean_data) <- gsub("tBody", "TimeBody", names(clean_data))
+names(clean_data) <- gsub("gravity", "Gravity", names(clean_data))
+names(clean_data) <- gsub(".", "", names(clean_data))
